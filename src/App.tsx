@@ -1,5 +1,4 @@
-import { MantineProvider, SimpleGrid, Stack } from "@mantine/core";
-import { PathfindingProvider } from "./context/PathfindingContext";
+import { MantineProvider, Stack } from "@mantine/core";
 import { Navbar } from "./components/Navbar/Navbar";
 import { Grid } from "./components/Grid/Grid";
 
@@ -9,14 +8,12 @@ import "@mantine/core/styles.css";
 export const App = () => {
   return (
     <MantineProvider>
-      <PathfindingProvider>
-        <SimpleGrid className={classes.root} spacing="md">
-          <Stack>
-            <Navbar />
-            <Grid />
-          </Stack>
-        </SimpleGrid>
-      </PathfindingProvider>
+      <div className={classes.root}>
+        <Stack className={classes.stack}>
+          <Navbar />
+          <Grid />
+        </Stack>
+      </div>
     </MantineProvider>
   );
 };

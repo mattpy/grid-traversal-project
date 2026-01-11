@@ -2,20 +2,20 @@ import { useCallback } from "react";
 import { Slider } from "@mantine/core";
 import { useHover } from "@mantine/hooks";
 import throttle from "lodash.throttle";
-import { usePathfinding } from "../../context/PathfindingContext";
+import { DEFAULT_SPEED, useGridStore } from "../../store/useGridStore";
 
 import classes from "./IterationSpeedControl.module.scss";
 
 export const IterationSpeedControl: React.FC = () => {
+  const setSpeed = useGridStore((state) => state.actions.setSpeed);
   const { hovered, ref } = useHover();
-  const { setSpeed } = usePathfinding();
 
   const handleChange = useCallback(
     throttle(
       (value: number) => {
         setSpeed(value);
       },
-      200,
+      500,
       { trailing: true }
     ),
     []
@@ -24,7 +24,7 @@ export const IterationSpeedControl: React.FC = () => {
   return (
     <Slider
       className={classes.slider}
-      defaultValue={20}
+      defaultValue={DEFAULT_SPEED}
       min={0}
       max={100}
       ref={ref}

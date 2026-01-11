@@ -1,19 +1,16 @@
-$height: 15px;
+$height: 12px;
 $width: 15px;
 
 .root {
   height: $height;
   width: $width;
-  font-size: 5px;
+  font-size: 8px;
   user-select: none;
   background-color: white;
-
-  &:first-child {
-    border-left: 1px solid black;
-  }
+  border: 0.5px solid black;
 
   &:hover {
-    background-color: rgb(212, 216, 254);
-    transition: background-color 0.2s ease-out;
+    background-color: grey;
+    transition: background-color 0.1s ease-out;
   }
 }

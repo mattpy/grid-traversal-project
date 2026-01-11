@@ -1,39 +1,46 @@
-import { useCallback, useMemo } from "react";
+import { useEffect, useMemo, type ReactNode } from "react";
 import { Container } from "@mantine/core";
-import { usePathfinding } from "../../context/PathfindingContext";
 import { Cell } from "./Cell";
+import {
+  DEFAULT_GRID_HEIGHT,
+  DEFAULT_GRID_WIDTH,
+  useGridStore,
+} from "../../store/useGridStore";
 
 import classes from "./Grid.module.scss";
 
 export const Grid: React.FC = () => {
-  const { gridProperties, gridData, setGridData } = usePathfinding();
+  const setMouseDown = useGridStore.getState().actions.setMouseDown;
 
-  const onCellClicked = useCallback((row: number, col: number) => {
-    setGridData(row, col, 2);
+  useEffect(() => {
+    const handleUp = () => setMouseDown(false);
+    window.addEventListener("mouseenter", handleUp);
+    window.addEventListener("mouseup", handleUp);
+
+    return () => {
+      window.removeEventListener("mouseenter", handleUp);
+      window.removeEventListener("mouseup", handleUp);
+    };
   }, []);
 
   const cells = useMemo(() => {
-    console.log("useMemo running");
-    const { rowCount, colCount } = gridProperties;
+    const collection: ReactNode[] = new Array(DEFAULT_GRID_HEIGHT);
 
-    return Array.from({ length: rowCount }).map((_, rowIndex) => (
-      <div className={classes.gridRow} key={rowIndex}>
-        {Array.from({ length: colCount }).map((_, colIndex) => {
-          return (
-            <Cell
-              key={`${rowIndex}-${colIndex}`}
-              row={rowIndex}
-              col={colIndex}
-              value={gridData[rowIndex][colIndex]}
-              onCellClicked={onCellClicked}
-            />
-          );
-        })}
-      </div>
-    ));
-  }, [gridData]);
+    for (let row = 0; row < DEFAULT_GRID_HEIGHT; row++) {
+      const cellRow: ReactNode[] = new Array(DEFAULT_GRID_WIDTH);
+      for (let col = 0; col < DEFAULT_GRID_WIDTH; col++) {
+        const key = `${row}-${col}`;
+        cellRow[col] = <Cell key={key} row={row} col={col} />;
+      }
+      collection[row] = (
+        <div key={row} className={classes.cellRow}>
+          {cellRow}
+        </div>
+      );
+    }
 
-  console.log("grid render");
+    return collection;
+  }, []);
 
   return <Container className={classes.root}>{cells}</Container>;
 };

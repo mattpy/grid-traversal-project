@@ -1,5 +1,9 @@
 .root {
-  border: 5px solid pink;
+  padding: 0.5em;
   height: 100vh;
-  overflow: auto;
+  overflow: hidden;
+}
+
+.stack {
+  height: 100%;
 }
