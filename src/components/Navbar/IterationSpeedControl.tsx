@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import { Slider } from "@mantine/core";
 import { useHover } from "@mantine/hooks";
 import throttle from "lodash.throttle";
-import { DEFAULT_SPEED, useGridStore } from "../../store/useGridStore";
+import { DEFAULT_SPEED, useGridStore } from "../../store/useGridStore/index.ts";
 
 import classes from "./IterationSpeedControl.module.scss";
 

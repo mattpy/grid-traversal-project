@@ -1,6 +1,6 @@
 import { memo, type MouseEvent } from "react";
-import { useGridStore } from "../../store/useGridStore";
-import { NodeType } from "../../store/useGridStore/types";
+import { useGridStore } from "../../store/useGridStore/index.ts";
+import { NodeType } from "../../store/useGridStore/types.ts";
 
 import classes from "./Cell.module.scss";
 

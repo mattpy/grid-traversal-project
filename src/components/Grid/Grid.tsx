@@ -1,11 +1,11 @@
 import { useEffect, useMemo, type ReactNode } from "react";
 import { Container } from "@mantine/core";
-import { Cell } from "./Cell";
+import { Cell } from "./Cell.tsx";
 import {
   DEFAULT_GRID_HEIGHT,
   DEFAULT_GRID_WIDTH,
   useGridStore,
-} from "../../store/useGridStore";
+} from "../../store/useGridStore/index.ts";
 
 import classes from "./Grid.module.scss";
 

@@ -5,8 +5,8 @@ import {
   Container,
   SegmentedControl,
 } from "@mantine/core";
-import { IterationSpeedControl } from "./IterationSpeedControl";
-import { useGridStore } from "../../store/useGridStore";
+import { IterationSpeedControl } from "./IterationSpeedControl.tsx";
+import { useGridStore } from "../../store/useGridStore/index.ts";
 import {
   Algorithms,
   type AlgorithmsUnion,

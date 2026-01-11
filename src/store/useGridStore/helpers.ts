@@ -1,5 +1,5 @@
 import { NodeType, type GridNode, type GridType } from "./types";
-import { useGridStore } from "../../store/useGridStore";
+import { useGridStore } from "./index.ts";
 import { Yallist as LinkedList } from "yallist";
 import { Heap } from "heap-js";
 

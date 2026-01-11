@@ -1,6 +1,6 @@
 import { MantineProvider, Stack } from "@mantine/core";
-import { Navbar } from "./components/Navbar/Navbar";
-import { Grid } from "./components/Grid/Grid";
+import { Navbar } from "./components/Navbar/Navbar.tsx";
+import { Grid } from "./components/Grid/Grid.tsx";
 
 import classes from "./App.module.scss";
 import "@mantine/core/styles.css";
