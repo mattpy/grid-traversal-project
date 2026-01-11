@@ -1,0 +1,19 @@
+$height: 15px;
+$width: 15px;
+
+.root {
+  height: $height;
+  width: $width;
+  font-size: 5px;
+  user-select: none;
+  background-color: white;
+
+  &:first-child {
+    border-left: 1px solid black;
+  }
+
+  &:hover {
+    background-color: rgb(212, 216, 254);
+    transition: background-color 0.2s ease-out;
+  }
+}
