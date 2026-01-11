@@ -188,26 +188,33 @@ export const traverseAStar = async () => {
     const { row, col } = node;
 
     for (const [dRow, dCol] of directions) {
+      // ... (check bounds and walls)
       const neighborRow = row + dRow;
       const neighborCol = col + dCol;
       const neighborKey = `${neighborRow}-${neighborCol}`;
 
       const n = grid[neighborKey];
       if (!n) continue;
-      const neighbor = { ...n };
 
-      if (visited.has(neighborKey) || neighbor.type === NodeType.Wall) continue;
-      neighbor.prev = node;
+      if (visited.has(neighborKey) || n.type === NodeType.Wall) continue;
+
+      // 1. Check if we found a better path (Standard A* logic)
+      // For now, let's at least ensure the 'prev' is saved:
+      const neighbor = { ...n, prev: node };
 
       if (neighbor.type === NodeType.End) {
+        // Crucially: save the end node's parent back to the store
+        updateNode({ ...neighbor, prev: node });
         lastNode = neighbor;
         break outer;
       }
 
       neighbor.type = NodeType.Visited;
       pq.offer(neighbor);
-      const speed = useGridStore.getState().speed;
+
+      // 2. Update the store with the NEW neighbor object including the 'prev' property
       updateNode(neighbor);
+      const speed = useGridStore.getState().speed;
       await sleep(calculateDelay(speed));
     }
   }
