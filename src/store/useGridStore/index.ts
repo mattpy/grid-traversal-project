@@ -8,6 +8,7 @@ import {
 } from "./types";
 import { createObjectGrid } from "./helpers";
 
+export const DEFAULT_GREED = 1;
 export const DEFAULT_SPEED = 100;
 export const DEFAULT_GRID_WIDTH = 80;
 export const DEFAULT_GRID_HEIGHT = 30;
@@ -16,6 +17,7 @@ export const useGridStore = create<GridStoreType>()(
   immer((set) => ({
     grid: createObjectGrid(DEFAULT_GRID_WIDTH, DEFAULT_GRID_HEIGHT),
     algorithm: "A*",
+    greed: DEFAULT_GREED,
     speed: DEFAULT_SPEED,
     isMouseDown: false,
     isUILocked: false,
@@ -50,9 +52,9 @@ export const useGridStore = create<GridStoreType>()(
           state.algorithm = algo;
         });
       },
-      setSpeed: (newSpeed: number) => {
+      setGreed: (greed: number) => {
         set((state) => {
-          state.speed = newSpeed;
+          state.greed = greed;
         });
       },
       setMouseDown: (value: boolean) =>

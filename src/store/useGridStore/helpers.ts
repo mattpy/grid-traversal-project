@@ -1,5 +1,5 @@
 import { NodeType, type GridNode, type GridType } from "./types";
-import { useGridStore } from "./index.ts";
+import { DEFAULT_SPEED, useGridStore } from "./index.ts";
 import { Yallist as LinkedList } from "yallist";
 import { Heap } from "heap-js";
 
@@ -75,7 +75,7 @@ export const traverseBFSOrDFS = async (method: "BFS" | "DFS") => {
     ];
 
     for (const [dRow, dCol] of directions) {
-      const speed = useGridStore.getState().speed;
+      const speed = DEFAULT_SPEED;
       const neighborRow = row + dRow;
       const neighborCol = col + dCol;
       const neighborKey = `${neighborRow}-${neighborCol}`;
@@ -98,10 +98,10 @@ export const traverseBFSOrDFS = async (method: "BFS" | "DFS") => {
     }
   }
 
-  traceBackPath(lastNode?.prev ?? null);
+  traceBackPathBFS(lastNode?.prev ?? null);
 };
 
-const traceBackPath = async (endNode: GridNode | null) => {
+const traceBackPathBFS = async (endNode: GridNode | null) => {
   const queue = new LinkedList([endNode]);
   while (endNode !== null && endNode.type !== NodeType.Start) {
     queue.push({ ...endNode });
@@ -109,7 +109,7 @@ const traceBackPath = async (endNode: GridNode | null) => {
   }
 
   const updateNode = useGridStore.getState().actions.updateNode;
-  const speed = useGridStore.getState().speed;
+  const speed = DEFAULT_SPEED;
   while (queue.length > 0) {
     const node = queue.shift();
     if (!node) continue;
@@ -143,78 +143,117 @@ export const traverseAStar = async () => {
   const updateNode = useGridStore.getState().actions.updateNode;
   const grid = useGridStore.getState().grid;
 
-  let startNode = null;
-  let endNode = null;
+  let startNode: GridNode | null = null;
+  let endNode: GridNode | null = null;
 
   for (const key in grid) {
-    if (grid[key].type === NodeType.Start) {
-      startNode = grid[key];
-    } else if (grid[key].type === NodeType.End) {
-      endNode = grid[key];
-    }
+    if (grid[key].type === NodeType.Start) startNode = grid[key];
+    else if (grid[key].type === NodeType.End) endNode = grid[key];
   }
 
   if (!startNode || !endNode) {
-    alert("Please select a start and end node.");
+    alert("Please select both a start and end node.");
     return;
   }
 
-  const visited = new Set<string>();
+  const startKey = `${startNode.row}-${startNode.col}`;
 
-  const customPriorityComparator = (a: GridNode, b: GridNode) =>
-    getManhattanDistance(a, endNode) - getManhattanDistance(b, endNode);
+  const gScore: Record<string, number> = {};
+  const fScore: Record<string, number> = {};
+  const visited = new Set<string>();
+  const prev: Record<string, string | null> = {};
+
+  for (const key in grid) {
+    gScore[key] = Infinity;
+    fScore[key] = Infinity;
+  }
+
+  gScore[startKey] = 0;
+  fScore[startKey] = getManhattanDistance(startNode, endNode);
+
+  const customPriorityComparator = (a: GridNode, b: GridNode) => {
+    const aKey = `${a.row}-${a.col}`;
+    const bKey = `${b.row}-${b.col}`;
+    return fScore[aKey] - fScore[bKey];
+  };
 
   const pq = new Heap(customPriorityComparator);
   pq.init([startNode]);
 
   const directions = [
-    [-1, 0], // Up
-    [1, 0], // Down
-    [0, -1], // Left
-    [0, 1], // Right
+    [-1, 0],
+    [1, 0],
+    [0, -1],
+    [0, 1],
   ];
 
-  let lastNode;
+  let foundPath = false;
 
-  outer: while (!pq.isEmpty()) {
-    const node = pq.poll()!;
-    const key = `${node.row}-${node.col}`;
+  while (!pq.isEmpty()) {
+    const current = pq.poll()!;
+    const currentKey = `${current.row}-${current.col}`;
 
-    if (visited.has(key)) continue;
-    visited.add(key);
-
-    if (node.type === NodeType.End) break;
-
-    const { row, col } = node;
+    if (current.type === NodeType.End) {
+      foundPath = true;
+      reconstructAStarPath(current, prev);
+      break;
+    }
 
     for (const [dRow, dCol] of directions) {
-      const neighborRow = row + dRow;
-      const neighborCol = col + dCol;
+      const neighborRow = current.row + dRow;
+      const neighborCol = current.col + dCol;
       const neighborKey = `${neighborRow}-${neighborCol}`;
+      const neighbor = grid[neighborKey];
 
-      const n = grid[neighborKey];
-      if (!n) continue;
+      if (!neighbor || neighbor.type === NodeType.Wall) continue;
 
-      if (visited.has(neighborKey) || n.type === NodeType.Wall) continue;
+      const currentGScore = gScore[currentKey] + 1;
 
-      const neighbor = { ...n, prev: node };
+      if (currentGScore < gScore[neighborKey]) {
+        prev[neighborKey] = currentKey;
+        gScore[neighborKey] = currentGScore;
+        const greediness = useGridStore.getState().greed;
+        fScore[neighborKey] =
+          currentGScore + getManhattanDistance(neighbor, endNode) * greediness;
 
-      if (neighbor.type === NodeType.End) {
-        updateNode({ ...neighbor, prev: node });
-        lastNode = neighbor;
-        break outer;
+        if (!visited.has(neighborKey)) {
+          pq.offer(neighbor);
+
+          if (neighbor.type !== NodeType.End) {
+            updateNode({ ...neighbor, type: NodeType.Visited });
+          }
+        }
       }
-
-      neighbor.type = NodeType.Visited;
-      pq.offer(neighbor);
-
-      updateNode(neighbor);
-      const speed = useGridStore.getState().speed;
-      await sleep(calculateDelay(speed));
     }
+
+    const speed = DEFAULT_SPEED;
+    await sleep(calculateDelay(speed));
   }
 
-  traceBackPath(lastNode?.prev ?? null);
+  if (!foundPath) {
+    alert("No path could be found");
+  }
+};
+
+const reconstructAStarPath = async (
+  endNode: GridNode,
+  prev: Record<string, string | null>
+) => {
+  const grid = useGridStore.getState().grid;
+  const updateNode = useGridStore.getState().actions.updateNode;
+
+  const endNodeKey = `${endNode.row}-${endNode.col}`;
+
+  for (
+    let node = grid[prev[endNodeKey]!];
+    node !== null && node.type !== NodeType.Start;
+    node = grid[prev[`${node.row}-${node.col}`]!]
+  ) {
+    const newNode = { ...node, type: NodeType.Path };
+    updateNode(newNode);
+    const speed = DEFAULT_SPEED;
+    await sleep(calculateDelay(speed));
+  }
 };
 
 const getManhattanDistance = (nodeA: GridNode, nodeB: GridNode): number => {

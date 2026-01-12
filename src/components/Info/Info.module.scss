@@ -1,0 +1,27 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  font-size: 14px;
+  width: 100%;
+}
+
+.wrapper {
+  display: flex;
+  justify-content: space-between;
+}
+
+.info {
+  padding: 1em 0;
+}
+
+.green {
+  color: limegreen;
+}
+
+.red {
+  color: red;
+}
+
+.black {
+  color: black;
+}
