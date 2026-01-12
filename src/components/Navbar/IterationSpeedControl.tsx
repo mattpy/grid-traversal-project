@@ -8,6 +8,7 @@ import classes from "./IterationSpeedControl.module.scss";
 
 export const IterationSpeedControl: React.FC = () => {
   const setGreed = useGridStore((state) => state.actions.setGreed);
+  const isUILocked = useGridStore((state) => state.isUILocked);
   const { hovered, ref } = useHover();
 
   const handleChange = useCallback(
@@ -25,6 +26,7 @@ export const IterationSpeedControl: React.FC = () => {
     <Slider
       className={classes.slider}
       defaultValue={DEFAULT_GREED}
+      disabled={isUILocked}
       min={1}
       max={10}
       ref={ref}

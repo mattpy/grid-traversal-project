@@ -40,13 +40,17 @@ export const Cell: React.FC<CellProps> = memo(({ row, col }) => {
 
   const handleMouseEnter = (event: MouseEvent<HTMLDivElement>) => {
     const isMouseDown = useGridStore.getState().isMouseDown;
-    if (isMouseDown) {
+    const isUILocked = useGridStore.getState().isUILocked;
+    if (isMouseDown && !isUILocked) {
       const type = getNodeTypeFromEvent(event);
       updateNode({ ...data, row, col, type });
     }
   };
 
   const handleMouseDown = (event: MouseEvent<HTMLDivElement>) => {
+    const isUILocked = useGridStore.getState().isUILocked;
+    if (isUILocked) return;
+
     const type = getNodeTypeFromEvent(event);
     updateNode({ ...data, row, col, type });
     setMouseDown(true);
