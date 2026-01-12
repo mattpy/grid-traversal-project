@@ -193,6 +193,9 @@ export const traverseAStar = async () => {
     const current = pq.poll()!;
     const currentKey = `${current.row}-${current.col}`;
 
+    if (visited.has(currentKey)) continue;
+    visited.add(currentKey);
+
     if (current.type === NodeType.End) {
       foundPath = true;
       reconstructAStarPath(current, prev);
