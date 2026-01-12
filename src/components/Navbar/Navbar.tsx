@@ -20,14 +20,16 @@ import {
 import classes from "./Navbar.module.scss";
 
 export const Navbar: React.FC = () => {
-  const { algorithm, reset, setAlgorithm, setIsUILocked } = useGridStore(
-    useShallow((state) => ({
-      algorithm: state.algorithm,
-      reset: state.actions.reset,
-      setAlgorithm: state.actions.setAlgorithm,
-      setIsUILocked: state.actions.setIsUILocked,
-    }))
-  );
+  const { algorithm, isUILocked, reset, setAlgorithm, setIsUILocked } =
+    useGridStore(
+      useShallow((state) => ({
+        algorithm: state.algorithm,
+        isUILocked: state.isUILocked,
+        reset: state.actions.reset,
+        setAlgorithm: state.actions.setAlgorithm,
+        setIsUILocked: state.actions.setIsUILocked,
+      }))
+    );
 
   const handleChange = (value: string) => {
     setAlgorithm(value as AlgorithmsUnion);
@@ -59,13 +61,23 @@ export const Navbar: React.FC = () => {
         data={[...Algorithms]}
         onChange={handleChange}
         value={algorithm}
+        disabled={isUILocked}
       />
       <IterationSpeedControl />
       <ButtonGroup className={classes.rightButtonGroup}>
-        <Button color="indigo" onClick={handleRunButtonClick} size="xs">
+        <Button
+          color="indigo"
+          disabled={isUILocked}
+          onClick={handleRunButtonClick}
+          size="xs"
+        >
           Find Path
         </Button>
-        <Button onClick={handleResetButtonClick} size="xs">
+        <Button
+          disabled={isUILocked}
+          onClick={handleResetButtonClick}
+          size="xs"
+        >
           Reset
         </Button>
       </ButtonGroup>
