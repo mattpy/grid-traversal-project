@@ -21,6 +21,7 @@ export type GridType = Record<string, GridNode>;
 
 export interface GridStoreType {
   grid: GridType;
+  greed: number;
   algorithm: AlgorithmsUnion;
   speed: number;
   isMouseDown: boolean;
@@ -29,7 +30,7 @@ export interface GridStoreType {
     updateNode: (node: GridNode) => void;
     batchUpdateNode: (nodes: GridNode[]) => void;
     setAlgorithm: (algo: AlgorithmsUnion) => void;
-    setSpeed: (newSpeed: number) => void;
+    setGreed: (greed: number) => void;
     setMouseDown: (value: boolean) => void;
     setIsUILocked: (value: boolean) => void;
     reset: () => void;

@@ -2,18 +2,18 @@ import { useCallback } from "react";
 import { Slider } from "@mantine/core";
 import { useHover } from "@mantine/hooks";
 import throttle from "lodash.throttle";
-import { DEFAULT_SPEED, useGridStore } from "../../store/useGridStore/index.ts";
+import { DEFAULT_GREED, useGridStore } from "../../store/useGridStore/index.ts";
 
 import classes from "./IterationSpeedControl.module.scss";
 
 export const IterationSpeedControl: React.FC = () => {
-  const setSpeed = useGridStore((state) => state.actions.setSpeed);
+  const setGreed = useGridStore((state) => state.actions.setGreed);
   const { hovered, ref } = useHover();
 
   const handleChange = useCallback(
     throttle(
       (value: number) => {
-        setSpeed(value);
+        setGreed(value);
       },
       500,
       { trailing: true }
@@ -24,12 +24,12 @@ export const IterationSpeedControl: React.FC = () => {
   return (
     <Slider
       className={classes.slider}
-      defaultValue={DEFAULT_SPEED}
-      min={0}
-      max={100}
+      defaultValue={DEFAULT_GREED}
+      min={1}
+      max={10}
       ref={ref}
       onChange={handleChange}
-      label="Speed"
+      label="A* Greediness"
       labelAlwaysOn
       styles={{
         label: {
