@@ -98,7 +98,7 @@ export const traverseBFSOrDFS = async (method: "BFS" | "DFS") => {
     }
   }
 
-  traceBackPathBFS(lastNode?.prev ?? null);
+  await traceBackPathBFS(lastNode?.prev ?? null);
 };
 
 const traceBackPathBFS = async (endNode: GridNode | null) => {
@@ -198,7 +198,7 @@ export const traverseAStar = async () => {
 
     if (current.type === NodeType.End) {
       foundPath = true;
-      reconstructAStarPath(current, prev);
+      await reconstructAStarPath(current, prev);
       break;
     }
 
